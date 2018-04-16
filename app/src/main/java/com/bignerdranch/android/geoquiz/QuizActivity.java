@@ -201,8 +201,8 @@ public class QuizActivity extends AppCompatActivity {
      */
     private void checkShowQuestionButton(int index) {
         if (questionsIsSend[index]) {
-            btnTrue.setVisibility(View.GONE);
-            btnFalse.setVisibility(View.GONE);
+            btnTrue.setVisibility(View.INVISIBLE);
+            btnFalse.setVisibility(View.INVISIBLE);
         } else {
             btnTrue.setVisibility(View.VISIBLE);
             btnFalse.setVisibility(View.VISIBLE);
