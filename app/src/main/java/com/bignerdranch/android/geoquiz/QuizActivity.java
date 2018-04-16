@@ -17,7 +17,7 @@ public class QuizActivity extends AppCompatActivity {
     private Button btnFalse;
     private ImageButton btnNext;
     private ImageButton btnPrev;
-
+    private final static String KEY_INDEX = "index";
     private static final String TAG = "QuizActivity";
     private int currentIndex = 0;
     private Question[] questions = new Question[]{
@@ -29,6 +29,13 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_oceans, true),
     };
     private TextView txtQuestion;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState: " + currentIndex);
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_INDEX, currentIndex);
+    }
 
     @Override
     protected void onStart() {
@@ -74,10 +81,14 @@ public class QuizActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: ");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
+        if (savedInstanceState != null) {
+            currentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
+        Log.d(TAG, "onCreate: " + currentIndex);
         txtQuestion = (TextView) findViewById(R.id.txtQuestion);
         btnTrue = (Button) findViewById(R.id.btnTrue);
         btnFalse = (Button) findViewById(R.id.btnFalse);
@@ -92,7 +103,7 @@ public class QuizActivity extends AppCompatActivity {
 
         txtQuestion.setOnClickListener(v -> next(1));
 
-        showQuestion(0);
+        showQuestion(currentIndex);
     }
 
     private void next(int in) {
