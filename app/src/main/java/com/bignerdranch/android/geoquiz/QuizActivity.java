@@ -1,9 +1,9 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,18 +12,18 @@ import android.widget.Toast;
 
 import com.bignerdranch.android.geoquiz.model.Question;
 
-import java.math.BigDecimal;
-
 public class QuizActivity extends AppCompatActivity {
-
+    private TextView txtQuestion;
     private Button btnTrue;
     private Button btnFalse;
+    private Button btnCheat;
     private ImageButton btnNext;
     private ImageButton btnPrev;
     private final static String KEY_INDEX = "index";
     private final static String KEY_COUNT = "count";
     private final static String KEY_OKCOUNT = "okCount";
     private final static String KEY_ISSEND = "questionsIsSend";
+    private final static String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
 
     private static final String TAG = "QuizActivity";
 
@@ -44,7 +44,7 @@ public class QuizActivity extends AppCompatActivity {
     private int okCount;
     //总答题数 需保存状态
     private int count;
-    private TextView txtQuestion;
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -113,17 +113,28 @@ public class QuizActivity extends AppCompatActivity {
         txtQuestion = (TextView) findViewById(R.id.txtQuestion);
         btnTrue = (Button) findViewById(R.id.btnTrue);
         btnFalse = (Button) findViewById(R.id.btnFalse);
+        btnCheat = (Button) findViewById(R.id.btn_cheat);
         btnNext = (ImageButton) findViewById(R.id.btnNext);
         btnPrev = (ImageButton) findViewById(R.id.btnPrev);
 
         btnTrue.setOnClickListener(v -> checkResult(currentIndex, true));
         btnFalse.setOnClickListener(v -> checkResult(currentIndex, false));
+        btnCheat.setOnClickListener(v -> {
+            Intent intent=newIntent(currentIndex);
+            startActivity(intent);
+        });
         btnNext.setOnClickListener(v -> next(1));
         btnPrev.setOnClickListener(v -> next(-1));
         txtQuestion.setOnClickListener(v -> next(1));
 
 //        showQuestion(currentIndex);
         next(0);
+    }
+
+    private Intent newIntent(int index) {
+        Intent intent=new Intent(QuizActivity.this,CheatActivity.class);
+        intent.putExtra(EXTRA_ANSWER_IS_TRUE, questions[index].isAnswerTrue());
+        return intent;
     }
 
     /**
@@ -151,13 +162,13 @@ public class QuizActivity extends AppCompatActivity {
     private void pageAction() {
         if (currentIndex <= 0) {
             currentIndex = 0;
-            btnPrev.setVisibility(View.GONE);
+            btnPrev.setVisibility(View.INVISIBLE);
         } else
             btnPrev.setVisibility(View.VISIBLE);
 
         if (currentIndex >= questions.length - 1) {
             currentIndex = questions.length - 1;
-            btnNext.setVisibility(View.GONE);
+            btnNext.setVisibility(View.INVISIBLE);
         } else
             btnNext.setVisibility(View.VISIBLE);
 

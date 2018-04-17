@@ -37,16 +37,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--<Button-->
-        <!--android:id="@+id/btnNext"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="64dp"-->
-        <!--android:layout_marginTop="44dp"-->
-        <!--android:drawablePadding="4dp"-->
-        <!--android:drawableRight="@drawable/arrow_right"-->
-        <!--android:text="@string/next_button"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/btnFalse" />-->
+    <!--android:id="@+id/btnNext"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="64dp"-->
+    <!--android:layout_marginTop="44dp"-->
+    <!--android:drawablePadding="4dp"-->
+    <!--android:drawableRight="@drawable/arrow_right"-->
+    <!--android:text="@string/next_button"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/btnFalse" />-->
     <ImageButton
         android:id="@+id/btnNext"
         android:layout_width="wrap_content"
@@ -57,16 +57,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFalse" />
     <!--<Button-->
-        <!--android:id="@+id/btnPrev"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginStart="64dp"-->
-        <!--android:layout_marginTop="44dp"-->
-        <!--android:drawableLeft="@drawable/arrow_left"-->
-        <!--android:drawablePadding="4dp"-->
-        <!--android:text="@string/prev_button"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/btnTrue" />-->
+    <!--android:id="@+id/btnPrev"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="64dp"-->
+    <!--android:layout_marginTop="44dp"-->
+    <!--android:drawableLeft="@drawable/arrow_left"-->
+    <!--android:drawablePadding="4dp"-->
+    <!--android:text="@string/prev_button"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/btnTrue" />-->
 
     <ImageButton
         android:id="@+id/btnPrev"
@@ -78,5 +78,19 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnTrue" />
+
+    <Button
+        android:id="@+id/btn_cheat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/cheat_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNext"
+        app:layout_constraintStart_toEndOf="@+id/btnPrev"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuestion" />
 
 </android.support.constraint.ConstraintLayout>
