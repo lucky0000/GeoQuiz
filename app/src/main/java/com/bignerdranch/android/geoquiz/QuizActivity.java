@@ -25,6 +25,8 @@ public class QuizActivity extends AppCompatActivity {
     private final static String KEY_COUNT = "count";
     private final static String KEY_OKCOUNT = "okCount";
     private final static String KEY_ISSEND = "questionsIsSend";
+    private final static String KEY_ISCHEAT = "questionsIsCheat";
+
     private final static String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     private final static int REQUEST_CODE_CHEAT = 0;
 
@@ -41,9 +43,12 @@ public class QuizActivity extends AppCompatActivity {
 
     private int currentIndex = 0;
     //是否作弊
-    private boolean isCheat = false;
+//    private boolean isCheat = false;
+    private boolean[] isCheats = new boolean[questions.length];
+
     //对应的问题是否回答 需保存状态
     private boolean[] questionsIsSend = new boolean[questions.length];
+
 
     //答对的问题数 需保存状态
     private int okCount;
@@ -60,6 +65,8 @@ public class QuizActivity extends AppCompatActivity {
         outState.putInt(KEY_OKCOUNT, okCount);
         outState.putInt(KEY_COUNT, count);
         outState.putBooleanArray(KEY_ISSEND, questionsIsSend);
+
+        outState.putBooleanArray(KEY_ISCHEAT, isCheats);
 
     }
 
@@ -113,6 +120,10 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            okCount=savedInstanceState.getInt(KEY_OKCOUNT);
+            count=savedInstanceState.getInt(KEY_COUNT);
+            questionsIsSend=savedInstanceState.getBooleanArray(KEY_ISSEND);
+            isCheats=savedInstanceState.getBooleanArray(KEY_ISCHEAT);
         }
         Log.d(TAG, "onCreate: " + currentIndex);
         txtQuestion = (TextView) findViewById(R.id.txtQuestion);
@@ -146,11 +157,11 @@ public class QuizActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        Log.d(TAG, "onActivityResult: ");
         switch (requestCode) {
             case REQUEST_CODE_CHEAT:
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    isCheat = wasAnswerShow(data);
+                    isCheats[currentIndex] = wasAnswerShow(data);
                 }
                 break;
         }
@@ -183,7 +194,7 @@ public class QuizActivity extends AppCompatActivity {
 
         int index = currentIndex % questions.length;
         showQuestion(index);
-        isCheat = false;
+
         //如果答过题 则隐藏选项按钮
         checkShowQuestionButton(index);
     }
@@ -262,7 +273,7 @@ public class QuizActivity extends AppCompatActivity {
         index = index % questions.length;
         boolean result = false;
 
-        if (isCheat) {
+        if (isCheats[index]) {
             show(R.string.judgment_toast);
         } else {
             if (questions[index].isAnswerTrue() == isTrue) {
@@ -286,6 +297,8 @@ public class QuizActivity extends AppCompatActivity {
         questionsIsSend = new boolean[questions.length];
         okCount = 0;
         count = 0;
+
+        isCheats = new boolean[questions.length];
     }
 
     /**
