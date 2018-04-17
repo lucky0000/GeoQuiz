@@ -3,6 +3,7 @@ package com.bignerdranch.android.geoquiz;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ public class CheatActivity extends AppCompatActivity {
     private final static String KEY_ANSWER = "com.bignerdranch.android.geoquiz.answer";
 
     private TextView txtAnswer;
+    private TextView txtSDKVersion;
     private Button btnShowAnswer;
 
     private static final String TAG = "CheatActivity";
@@ -34,6 +36,7 @@ public class CheatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cheat);
 
         txtAnswer = (TextView) findViewById(R.id.txt_answer);
+        txtSDKVersion = (TextView) findViewById(R.id.txtSDKVersion);
         btnShowAnswer = (Button) findViewById(R.id.btn_show_answer);
 
         if (savedInstanceState != null) {
@@ -53,6 +56,8 @@ public class CheatActivity extends AppCompatActivity {
             hideButton();
         });
 
+        String sdkVersion = String.format(getResources().getString(R.string.sdk_version), Build.VERSION.SDK_INT);
+        txtSDKVersion.setText(sdkVersion);
     }
 
     private void showAnswer() {
@@ -80,6 +85,7 @@ public class CheatActivity extends AppCompatActivity {
      */
     private void hideButton() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Log.d(TAG, "hideButton: true");
             int cx = btnShowAnswer.getWidth() / 2;
             int cy = btnShowAnswer.getHeight() / 2;
             float radius = btnShowAnswer.getWidth();
@@ -94,8 +100,13 @@ public class CheatActivity extends AppCompatActivity {
                     btnShowAnswer.setVisibility(View.INVISIBLE);
                 }
             });
-        } else
+
+            anim.start();
+        } else {
+            Log.d(TAG, "hideButton: true");
             btnShowAnswer.setVisibility(View.INVISIBLE);
+        }
+
 
     }
 
