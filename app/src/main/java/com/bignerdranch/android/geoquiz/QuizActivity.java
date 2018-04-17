@@ -2,7 +2,6 @@ package com.bignerdranch.android.geoquiz;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +25,8 @@ public class QuizActivity extends AppCompatActivity {
     private final static String KEY_OKCOUNT = "okCount";
     private final static String KEY_ISSEND = "questionsIsSend";
     private final static String KEY_ISCHEAT = "questionsIsCheat";
+    private final static String KEY_CHEATCOUNT = "cheatCount";
+
 
     private final static String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     private final static int REQUEST_CODE_CHEAT = 0;
@@ -42,6 +43,9 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int currentIndex = 0;
+    private final static int maxCheatCount = 3;
+    private int cheatCount = 0;
+
     //是否作弊
 //    private boolean isCheat = false;
     private boolean[] isCheats = new boolean[questions.length];
@@ -64,9 +68,11 @@ public class QuizActivity extends AppCompatActivity {
 
         outState.putInt(KEY_OKCOUNT, okCount);
         outState.putInt(KEY_COUNT, count);
+        outState.putInt(KEY_CHEATCOUNT, cheatCount);
         outState.putBooleanArray(KEY_ISSEND, questionsIsSend);
 
         outState.putBooleanArray(KEY_ISCHEAT, isCheats);
+
 
     }
 
@@ -120,10 +126,11 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            okCount=savedInstanceState.getInt(KEY_OKCOUNT);
-            count=savedInstanceState.getInt(KEY_COUNT);
-            questionsIsSend=savedInstanceState.getBooleanArray(KEY_ISSEND);
-            isCheats=savedInstanceState.getBooleanArray(KEY_ISCHEAT);
+            okCount = savedInstanceState.getInt(KEY_OKCOUNT);
+            count = savedInstanceState.getInt(KEY_COUNT);
+            cheatCount = savedInstanceState.getInt(KEY_CHEATCOUNT);
+            questionsIsSend = savedInstanceState.getBooleanArray(KEY_ISSEND);
+            isCheats = savedInstanceState.getBooleanArray(KEY_ISCHEAT);
         }
         Log.d(TAG, "onCreate: " + currentIndex);
         txtQuestion = (TextView) findViewById(R.id.txtQuestion);
@@ -136,9 +143,13 @@ public class QuizActivity extends AppCompatActivity {
         btnTrue.setOnClickListener(v -> checkResult(currentIndex, true));
         btnFalse.setOnClickListener(v -> checkResult(currentIndex, false));
         btnCheat.setOnClickListener(v -> {
-            Intent intent = newIntent(currentIndex);
-            //startActivity(intent);
-            startActivityForResult(intent, REQUEST_CODE_CHEAT);
+            if (cheatCount >= maxCheatCount) {
+                show(String.format(getResources().getString(R.string.error_max_cheat_count), maxCheatCount));
+            } else {
+                Intent intent = newIntent(currentIndex);
+                //startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
+            }
         });
         btnNext.setOnClickListener(v -> next(1));
         btnPrev.setOnClickListener(v -> next(-1));
@@ -162,6 +173,9 @@ public class QuizActivity extends AppCompatActivity {
             case REQUEST_CODE_CHEAT:
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     isCheats[currentIndex] = wasAnswerShow(data);
+
+                    if (isCheats[currentIndex])
+                        cheatCount++;
                 }
                 break;
         }
@@ -297,6 +311,7 @@ public class QuizActivity extends AppCompatActivity {
         questionsIsSend = new boolean[questions.length];
         okCount = 0;
         count = 0;
+        cheatCount = 0;
 
         isCheats = new boolean[questions.length];
     }

@@ -9,7 +9,8 @@
     <string name="correct_toast">Correct!</string>
     <string name="incorrect_toast">Incorrect!</string>
     <string name="score_toast">your score: %1$.2f</string>
-    <string name="sdk_version">SDK Version: %1$.2s</string>
+    <string name="sdk_version">SDK Version: %1$s</string>
+    <string name="error_max_cheat_count">max cheat count: %1$d</string>
     <string name="question_australia">Canberra is the capital of Australia.</string>
     <string name="question_oceans">The Pacific Ocean is larger than
         the Atlantic Ocean.</string>
