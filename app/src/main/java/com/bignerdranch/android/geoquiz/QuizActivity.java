@@ -1,6 +1,8 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,7 @@ public class QuizActivity extends AppCompatActivity {
     private final static String KEY_OKCOUNT = "okCount";
     private final static String KEY_ISSEND = "questionsIsSend";
     private final static String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
+    private final static int REQUEST_CODE_CHEAT = 0;
 
     private static final String TAG = "QuizActivity";
 
@@ -37,6 +40,8 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int currentIndex = 0;
+    //是否作弊
+    private boolean isCheat = false;
     //对应的问题是否回答 需保存状态
     private boolean[] questionsIsSend = new boolean[questions.length];
 
@@ -120,8 +125,9 @@ public class QuizActivity extends AppCompatActivity {
         btnTrue.setOnClickListener(v -> checkResult(currentIndex, true));
         btnFalse.setOnClickListener(v -> checkResult(currentIndex, false));
         btnCheat.setOnClickListener(v -> {
-            Intent intent=newIntent(currentIndex);
-            startActivity(intent);
+            Intent intent = newIntent(currentIndex);
+            //startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_CHEAT);
         });
         btnNext.setOnClickListener(v -> next(1));
         btnPrev.setOnClickListener(v -> next(-1));
@@ -131,8 +137,33 @@ public class QuizActivity extends AppCompatActivity {
         next(0);
     }
 
+    /**
+     * 处理子activity返回的结果
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_CODE_CHEAT:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    isCheat = wasAnswerShow(data);
+                }
+                break;
+        }
+
+        //super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private boolean wasAnswerShow(Intent intent) {
+        return intent.getBooleanExtra(CheatActivity.EXTRA_ANSWER_IS_SHOW, false);
+    }
+
     private Intent newIntent(int index) {
-        Intent intent=new Intent(QuizActivity.this,CheatActivity.class);
+        Intent intent = new Intent(QuizActivity.this, CheatActivity.class);
         intent.putExtra(EXTRA_ANSWER_IS_TRUE, questions[index].isAnswerTrue());
         return intent;
     }
@@ -152,6 +183,7 @@ public class QuizActivity extends AppCompatActivity {
 
         int index = currentIndex % questions.length;
         showQuestion(index);
+        isCheat = false;
         //如果答过题 则隐藏选项按钮
         checkShowQuestionButton(index);
     }
@@ -229,17 +261,21 @@ public class QuizActivity extends AppCompatActivity {
     private void checkResult(int index, boolean isTrue) {
         index = index % questions.length;
         boolean result = false;
-        if (questions[index].isAnswerTrue() == isTrue) {
-            result = true;
-            show(R.string.correct_toast);
+
+        if (isCheat) {
+            show(R.string.judgment_toast);
         } else {
-            show(R.string.incorrect_toast);
+            if (questions[index].isAnswerTrue() == isTrue) {
+                result = true;
+                show(R.string.correct_toast);
+            } else {
+                show(R.string.incorrect_toast);
+            }
         }
 
         questionSend(index, result);
         next(1);
     }
-
 
 
     /**
